@@ -5,5 +5,3 @@ node_modules/
 haters/
 variables.env
 variables.env.now
-../.vscode/
-../workspace.code-workspace
