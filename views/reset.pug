@@ -1,0 +1,12 @@
+extends layout
+
+block content
+  .inner
+    //- form without action, defaults to current url. Will post to itself - reset
+    form.form(method="POST")
+      h2=title
+      label(for="password") Password
+      input(type="password" name="password" required)
+      label(for="password-confirm") Confirm Password 
+      input(type="password" name="password-confirm" required)
+      input.button(type="submit" value="Reset Password->")

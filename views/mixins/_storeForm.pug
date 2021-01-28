@@ -1,0 +1,31 @@
+mixin storeForm(store = {})
+ form(action=`/add/${store._id || ''}` method="POST"  class="card" enctype="multipart/form-data") 
+  //- Name
+  label(for="name") Name
+  input(type="text" name="name" value=store.name)
+  //- Description
+  label(for="description") Description
+  textarea(name="description")= store.description
+  //- Image upload
+  .img-input
+    label(id='labelPhoto' for="photo") Photo
+    input(type="file" name="photo" value="Enter a Store Picture" id="photo" accept="image/gif, image/png, image/jpeg")
+    img(id='storePhoto' src=(store.photo ? `/uploads/${store.photo}` : '') alt=store.name width=200 style=(store.photo ? null : 'display:none'))
+  //- address
+  label(for="address") Address
+  input(type="text" id="address" name="location[address]" value=(store.location && store.location.address))
+  //- Lng
+  label(for="lng") Address Lng 
+  input(type="text" id="lng" name="location[coordinates][0]" value=(store.location && store.location.coordinates[0]) required)
+  //- Lat
+  label(for="lat") Address Lat
+  input(type="text" id="lat" name="location[coordinates][1]" value=(store.location && store.location.coordinates[1]) required)
+  //- tags
+  - const choices = ['Wifi', 'Open Late', 'Family Friend', 'Vegatarian', 'Licensed']
+  - const tags = store.tags || []
+  ul.tags
+    each choice in choices
+      .tag.tag__choice
+        input(type="checkbox" id=choice value=choice name="tags" checked=(tags.includes(choice)))
+        label(for=choice) #{choice}
+  input(type="submit" value="Save ➡" class="button")

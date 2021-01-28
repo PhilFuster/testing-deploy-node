@@ -1,0 +1,51 @@
+extends layout
+
+block leafletMap
+  link(rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+   integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+   crossorigin="")
+  script(src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" 
+   integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" 
+   crossorigin="")
+include mixins/_reviewForm
+include mixins/_review
+block content
+  .single
+    .single__hero
+      img(class="single__image" src=`/uploads/${store.photo || 'store.png'}`) 
+      h2.title.title--single
+        a(href=`/store/${store.slug}`) #{store.name}
+  .single__details.inner
+    #mapid.single__map
+    p.single__location= store.location.address
+    p= store.description
+    if store.tags
+      ul.tags
+        each tag in store.tags
+          li.tag
+            a.tag__link(href=`/tags/${tag}`)
+              span.tag__text ##{tag}
+    if user
+      +reviewForm(store)
+    else
+      p ♥ Love this place? 
+        a(href=`/login`) Login
+        |  to leave a review
+    if store.reviews
+      .reviews
+        each review in store.reviews
+          .review
+            +review(review)           
+  script.
+    var myMap = L.map('mapid').setView([#{store.location.coordinates}].reverse(), 13)
+    L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+      prefix: false,
+      maxZoom: 18,
+      id: 'mapbox/streets-v11',
+      tileSize: 512,
+      zoomOffset: -1,
+      accessToken: 'pk.eyJ1IjoiZmlscGhhc3RlciIsImEiOiJjazlleXlxYWQwNnl6M2ZvN2xzaWljZDl0In0.oS0s-lRVv22PJ8oHREe3Jg'
+    }).addTo(myMap);
+    var marker = L.marker([#{store.location.coordinates}].reverse()).addTo(myMap)  
+    var attributionControl =  L.control.attribution({position: 'bottomleft'}).addAttribution('Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>')
+    myMap.addControl(attributionControl);
